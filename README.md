@@ -1,212 +1,281 @@
-# 🎬 Movie Rental Risk Analytics - SQL Revenue Leakage Analysis
-<img width="1024" height="585" alt="image" src="https://github.com/user-attachments/assets/08dcb68b-263c-44cf-99a5-9b5e7b8aa6d1" />
+# 🎞️ Product Demand & Inventory Analysis for a Multi-Store Rental Business
 
-### Financial Risk Modeling on 80,000+ Rental Transactions using SQL
+![movie1](https://github.com/user-attachments/assets/2fb575c5-2957-41b5-a2b9-337ee91fc36d)
 
----
+**Project Overview:**
+This project analyzes rental operations and inventory demand for a multi-store DVD rental company using SQL.
 
-## 🧩 Business Problem
+Using the Sakila Sample Database, created by MySQL, the analysis evaluates customer behavior, product demand, inventory utilization, and store-level revenue performance.
 
-The movie rental business lacked visibility into:
+The goal is to demonstrate how SQL can be used to generate business insights that support inventory planning, demand analysis, and revenue monitoring.
 
-- Revenue exposure from delayed payments  
-- Customer payment risk patterns  
-- Genre-wise revenue dependency  
-- Cash flow predictability  
+### 🧩 Business Problem
 
-Without structured risk segmentation, revenue leakage from inconsistent payment behavior could not be quantified.
+A multi-store rental business needs visibility into operational performance, including:
 
----
+• Which movie genres generate the most revenue
+• Which customers drive the most rentals
+• How often customers rent movies
+• How efficiently inventory is utilized
+• Whether rental durations impact inventory availability
+• How revenue is distributed across stores
 
-## 🎯 Project Objective
+Without structured analysis, these operational insights remain hidden within multiple relational tables.
 
-To identify high-risk customer segments contributing to revenue instability and quantify how much revenue is tied to delayed or inconsistent payment behavior.
+### 🎯Project Objective
 
----
+Use SQL to analyze rental transactions and uncover insights about:
 
-## 📊 Data Overview
+• Revenue contribution by movie genre
+• Customer lifetime value
+• Rental frequency and customer engagement
+• Late return patterns affecting inventory availability
+• Inventory utilization across films
+• Store-level revenue performance
 
-**Dataset:** Sakila Movie Rental Database  
-**Source:** [MySQL Sakila Sample Database](https://github.com/jOOQ/sakila) 
-**Data Volume:** 50,000+ rental & payment records  
+## 📊 Dataset
 
-### Core Tables Used
+The project uses the Sakila Sample Database, a relational dataset designed to simulate a DVD rental business.
 
-| Table | Purpose |
-|--------|---------|
-| rental | Rental transactions |
-| payment | Revenue & payment timestamps |
-| customer | Customer profiles |
-| film | Movie details |
-| category | Genre classification |
-| inventory | Film-store mapping |
+Dataset Source: [MySQL Sakila Sample Database](https://github.com/jOOQ/sakila) 
+
+Approximate dataset size:
+
+• 50,000+ rental and payment records
+• Handling 16+ relational tables representing customers, inventory, films, and stores
 
 <img width="799" height="521" alt="Sakila - ERD" src="https://github.com/user-attachments/assets/4ffc3c2f-1090-4a1a-88f1-1b94ca97054d" />
----
 
-## 🧠 Key Technical Implementation: SQL Risk Modeling
+## Data Model
 
-### 🔹 Data Volume
-Processed **80,000+ transactions** to analyze payment risk behavior.
+Key tables used:
 
-### 🔹 Joins
-Merged:
-- rental  
-- payment  
-- film  
-- category  
+**Table	Business Meaning**
+film	Product catalog
+inventory	Store inventory stock
+rental	Customer rental transactions
+payment	Revenue transactions
+customer	Customer profiles
+category	Product category (genre)
+store	Store locations
 
-to calculate revenue and risk exposure at the **genre level**.
+This structure simulates a small-scale retail inventory system.
 
-### 🔹 Window Functions
-Used `LAG()` and `LEAD()` to:
+## SQL Business Analysis
 
-- Measure delay between consecutive rentals  
-- Identify inconsistent payment behavior  
-- Detect patterns of late returns impacting revenue cycles  
+The project includes several SQL analyses to measure revenue performance, customer behavior, and operational efficiency.
 
-### 🔹 Risk Segmentation Logic
+**1. Revenue by Genre**
 
-Customers were segmented into:
+Measures how much revenue each movie genre generates.
 
-- 🟢 Low Risk  
-- 🟡 Medium Risk  
-- 🔴 High Risk  
+Metric used:
 
-based on payment delay frequency and rental behavior.
+SUM(payment.amount) AS total_revenue
 
-### 🔹 Aggregation Insight
-
-Calculated that **25% of total revenue** was associated with the **High-Risk customer segment**, indicating potential revenue leakage exposure.
-
----
-
-## 💻 Sample Risk Segmentation Query
-
-```sql
--- Risk Segmentation by Genre
-WITH PaymentDelays AS (
-    SELECT 
-        c.customer_id,
-        f.title,
-        cat.name AS genre,
-        p.amount,
-        DATEDIFF(r.return_date, r.rental_date) AS rental_duration,
-        LAG(p.payment_date) OVER (PARTITION BY c.customer_id ORDER BY p.payment_date) AS prev_payment_date
-    FROM rental r
-    JOIN payment p ON r.rental_id = p.rental_id
-    JOIN customer c ON r.customer_id = c.customer_id
-    JOIN inventory i ON r.inventory_id = i.inventory_id
-    JOIN film f ON i.film_id = f.film_id
-    JOIN film_category fc ON f.film_id = fc.film_id
-    JOIN category cat ON fc.category_id = cat.category_id
-)
+Example Query
 
 SELECT 
-    genre,
-    COUNT(customer_id) AS total_customers,
-    SUM(amount) AS total_revenue
-FROM PaymentDelays
+    c.name AS genre,
+    SUM(p.amount) AS total_revenue
+FROM payment p
+JOIN rental r 
+    ON p.rental_id = r.rental_id
+JOIN inventory i 
+    ON r.inventory_id = i.inventory_id
+JOIN film f 
+    ON i.film_id = f.film_id
+JOIN film_category fc 
+    ON f.film_id = fc.film_id
+JOIN category c 
+    ON fc.category_id = c.category_id
 GROUP BY genre
 ORDER BY total_revenue DESC;
-```
 
----
+Insight
 
-## 📈 Key Insights
+Certain genres contribute a larger share of total revenue, indicating stronger customer demand.
 
-| Area | Insight |
-|------|----------|
-| 💰 Revenue Risk | 25% of revenue tied to high-risk payment behavior |
-| 🎬 Genre Exposure | Certain genres showed higher delayed-payment frequency |
-| 👥 Customer Risk | Small segment of customers created disproportionate revenue instability |
-| 🕒 Payment Behavior | Repeated delays detected using window functions |
+**2. Customer Lifetime Value (CLV)**
 
----
+Calculates total revenue generated by each customer.
 
-## 📊 Risk vs Genre Visualization
+Metric used:
 
-A Power BI dashboard was built to visualize:
+SUM(payment.amount)
 
-- Revenue by Risk Category  
-- Genre-wise Risk Distribution  
-- Payment Delay Patterns  
-- High-Risk Revenue Contribution  
+Example Query
 
-📷 Dashboard /Visuals folder
+SELECT 
+    c.customer_id,
+    c.first_name,
+    c.last_name,
+    SUM(p.amount) AS customer_lifetime_value
+FROM customer c
+JOIN payment p 
+    ON c.customer_id = p.customer_id
+GROUP BY c.customer_id
+ORDER BY customer_lifetime_value DESC;
+
+Insight
+
+A small segment of customers contributes a large share of revenue, highlighting the importance of customer retention.
+
+**3. Rental Frequency Analysis**
+
+Measures how frequently each customer rents movies.
+
+Metric used:
+
+COUNT(rental_id)
+
+Example Query
+
+SELECT 
+    customer_id,
+    COUNT(rental_id) AS total_rentals
+FROM rental
+GROUP BY customer_id
+ORDER BY total_rentals DESC;
+
+Customers can be segmented into:
+
+• Frequent renters
+• Occasional renters
+• One-time renters
+
+Insight
+
+Frequent renters represent a highly engaged customer segment and contribute significantly to total rental volume.
+
+**4. Late Return Analysis**
+
+Measures how long movies remain rented before being returned.
+
+Metric used:
+
+DATEDIFF(return_date, rental_date)
+
+Example Query
+
+SELECT 
+    rental_id,
+    customer_id,
+    DATEDIFF(return_date, rental_date) AS rental_duration
+FROM rental;
+
+Insight
+
+Long rental durations can delay inventory availability and reduce overall product circulation.
+
+**5. Inventory Utilization**
+
+Identifies which films are rented most frequently.
+
+Example Query
+
+SELECT 
+    f.title,
+    COUNT(r.rental_id) AS rental_count
+FROM film f
+JOIN inventory i 
+    ON f.film_id = i.film_id
+JOIN rental r 
+    ON i.inventory_id = r.inventory_id
+GROUP BY f.title
+ORDER BY rental_count DESC;
+
+Insight
+
+A small number of films account for a large portion of total rentals, indicating concentrated product demand.
+
+**6. Revenue by Store**
+
+Compares revenue generated by each store location.
+
+Example Query
+
+SELECT 
+    s.store_id,
+    SUM(p.amount) AS total_revenue
+FROM payment p
+JOIN staff st 
+    ON p.staff_id = st.staff_id
+JOIN store s 
+    ON st.store_id = s.store_id
+GROUP BY s.store_id
+ORDER BY total_revenue DESC;
+
+Insight
+
+Revenue distribution varies between store locations, suggesting differences in local demand patterns.
+
+## Dashboard Visualization
+
+A Power BI dashboard was built to visualize key operational metrics, including:
+
+• Revenue by genre
+• Customer lifetime value distribution
+• Rental frequency trends
+• Inventory utilization
+• Store revenue comparison
+
+Dashboard images are available in the Visuals folder.
+
 <img width="804" height="459" alt="dvd_dashboard" src="https://github.com/user-attachments/assets/47a21175-d7d7-405e-aad0-c83d2c132566" />
 ---
 
-## 💡 Business Recommendations
-
-- Implement credit monitoring for high-risk customers  
-- Introduce late fee automation  
-- Incentivize on-time returns  
-- Monitor genre-specific revenue volatility  
-- Build early warning churn signals  
-
----
-
-## 🗂️ Updated Repository Structure
-
-```
-Movie-Rental-Risk-Analytics-SQL-Revenue-Leakage-Analysis/
+Repository Structure
+Movie-Rental-Inventory-Analytics-SQL/
 │
 ├── Data/
 │   └── rental_records.csv
 │
 ├── SQL_Queries/
-│   ├── 01_store_revenue.sql
-│   ├── 02_movie_category.sql
-│   ├── 03_top_customers.sql
-│   ├── 04_rental_analysis.sql
-│   ├── 05_staff_performance.sql
-│   ├── 06_geo_revenue.sql
-│   ├── 07_inventory_status.sql
-│   └── risk_segmentation_by_genre.sql
+│   ├── 01_revenue_by_genre.sql
+│   ├── 02_customer_lifetime_value.sql
+│   ├── 03_rental_frequency.sql
+│   ├── 04_late_return_analysis.sql
+│   ├── 05_inventory_utilization.sql
+│   ├── 06_revenue_by_store.sql
 │
 ├── Visuals/
-│   ├── risk_vs_genre_chart.png
-│   └── segmentation_output.png
+│   ├── demand_by_genre_chart.png
+│   └── rental_dashboard.png
 │
 ├── ER_Diagram/
 │   └── Sakila_ERD.png
 │
 ├── README.md
 └── .gitignore
-```
+Tools & Technologies
 
----
+SQL (MySQL)
+Power BI
+Relational Data Modeling
+Data Analysis
 
-## 🛠️ Tools & Technologies
+## Skills Demonstrated
 
-- MySQL  
-- SQL (Joins, CTEs, Window Functions, Aggregations)  
-- Power BI  
-- Data Modeling  
-- Risk Segmentation  
+• Advanced SQL joins across multiple tables
+• Aggregations and business metric calculation
+• Customer analytics and segmentation
+• Inventory utilization analysis
+• Revenue performance analysis
+• Data storytelling using SQL insights
 
----
+About Me
 
-## 🎯 What This Project Demonstrates
+A. Sai Arvind
+Data Analyst | SQL | Power BI | Business Analytics
 
-- Advanced SQL (Window Functions + CTEs)  
-- Revenue Leakage Analysis  
-- Risk-Based Customer Segmentation  
-- Genre-Level Revenue Modeling  
-- Business-Oriented SQL Storytelling  
+Email
+saiarvind5081@gmail.com
 
----
+LinkedIn
+https://www.linkedin.com/in/saiarvindofficial/
 
-## 👤 About Me
+GitHub
+https://github.com/Sai-Arvind
 
-**A. Sai Arvind**  
-Data Analyst | SQL | Power BI | Risk & Revenue Analytics  
-
-📧 saiarvind5081@gmail.com  
-🔗 https://www.linkedin.com/in/saiarvindofficial/  
-🔗 https://github.com/Sai-Arvind  
-
----
-
-⭐ If you found this project valuable, consider giving it a star!
+⭐ If you found this project useful, consider giving it a star.
