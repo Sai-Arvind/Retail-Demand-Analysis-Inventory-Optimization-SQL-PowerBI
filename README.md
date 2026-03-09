@@ -11,11 +11,11 @@ Created by **Mike Hillyer** in **2005**, the Sakila Sample Database is a **stand
 3. Inventory utilization
 4. Store-level revenue performance
 
-The goal is to demonstrate how SQL can be used to generate **business insights that support inventory planning, demand analysis and revenue monitoring.**
+The goal is to demonstrate how SQL can be used to generate **business insights** that **support inventory planning**, **demand analysis** and **revenue monitoring**.**
 
 ### 🧩 Business Problem
 
-A multi store rental business needs visibility into operational performance
+A multi store rental business **needs visibility into operational performance**
 
 1. Which movie genres generate the most revenue
 2. Which customers drive the most rentals
@@ -23,11 +23,11 @@ A multi store rental business needs visibility into operational performance
 4. Whether rental durations impact inventory availability
 5. How revenue is distributed across stores
 
-Without structured analysis, these operational insights remain hidden within multiple relational tables.
+Without structured analysis, these **Operational insights remain hidden** within multiple relational tables.
 
 ### 🎯 Project Objective
 
-Utilizing SQL to analyze rental transactions and uncover insights
+**Utilizing SQL** to analyze rental transactions and **uncover insights**
 
 1. Revenue contribution by movie genre
 2. Customer lifetime value
