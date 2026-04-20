@@ -2,8 +2,23 @@
 
 ![movie1](https://github.com/user-attachments/assets/2fb575c5-2957-41b5-a2b9-337ee91fc36d)
 
+
 **Project Overview:**
-Created by **Mike Hillyer** in **2005**, the Sakila Sample Database is a **standardized relational dataset** for SQL practice.
+
+
+The Sector & Industry Framing
+To make this sound professional in an interview or on a resume, use this exact phrasing:
+
+Sector: Consumer Services & Retail Operations
+
+Industry: Specialty Rental & Subscription Retail (e.g., The "Pre-Streaming" Business Model)
+
+Live Company Example: Netflix (2005-era DVD Operations) or Rent the Runway.
+
+Why? Both companies rely on "Circular Inventory"—products that leave the warehouse, must be tracked while with the customer, and must be processed quickly upon return to be rented again.
+
+
+
 
 **Includes**
 1. Customer behavior
@@ -13,6 +28,19 @@ Created by **Mike Hillyer** in **2005**, the Sakila Sample Database is a **stand
 
 The goal is to demonstrate how SQL can be used to generate **business insights** that **support inventory planning**, **demand analysis** and **revenue monitoring**.**
 
+
+
+
+### problem 
+
+3. The Live Parallel: "The Netflix DVD Challenge"
+In the early 2000s, Netflix’s biggest problem wasn't streaming; it was Logistics.
+
+Demand: They had to predict which new releases to stock in high volume.
+
+Inventory: They had to ensure DVDs were returned quickly to satisfy the next person in the "queue."
+
+Customer: They had to keep users on a subscription by ensuring they always had a movie at home.
 ### 🧩 Business Problem
 
 A multi store rental business **needs visibility into operational performance**
