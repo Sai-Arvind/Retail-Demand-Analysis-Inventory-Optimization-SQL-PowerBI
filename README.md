@@ -1,70 +1,61 @@
-# 🎞️ Product Demand & Inventory Analysis for a Multi Store Rental Business
-
-![movie1](https://github.com/user-attachments/assets/2fb575c5-2957-41b5-a2b9-337ee91fc36d)
 
 
-**Project Overview:**
+# Movies Dvd Store Business
+- **Industry:** Rental & Subscription Retail
+- **Product Demand** and **Inventory Optimization** using Customer & Store Insights, "Which of the Top 3 categories Driving 57% of Revenue".
+
+<img width="1280" height="720" alt="image" src="https://github.com/user-attachments/assets/c8759eac-a1d2-4239-afee-1dc7f47237b2" />
+
+---
+
+### ⚡ Executive Summary
+
+1. This project simulates a Netflix (2005-era DVD Operations) & Rent the Runway.
+- Business Health
+- Operations Inventory Utilization & store level performance
+- supply: customer behaviour analysis 
+2. Genres like Sports, Sci-Fi, and Animation account for a massive 57% of revenue, while the Rental Frequency shows a huge bulk of "Regular" and "Elite" users.
+3. If you lost the "x" inventory, the "Elite VIP" tier (people renting 40+ times) would likely collapse.
 
 
-The Sector & Industry Framing
-To make this sound professional in an interview or on a resume, use this exact phrasing:
+---
 
-Sector: Consumer Services & Retail Operations
+### 🚩 Business Problem
+Key challenges:
 
-Industry: Specialty Rental & Subscription Retail (e.g., The "Pre-Streaming" Business Model)
+- Inventory Mismatch: Why does the store with more stock generate less revenue?
+- Loyalty Gaps: Who are the 'Elite' users driving the most value?
+- Revenue Leakage: How many potential rentals are lost due to late returns?
+- Genre Concentration: Is the business too reliant on specific niches like Sports and Sci-Fi?
 
-Live Company Example: Netflix (2005-era DVD Operations) or Rent the Runway.
+---
 
-Why? Both companies rely on "Circular Inventory"—products that leave the warehouse, must be tracked while with the customer, and must be processed quickly upon return to be rented again.
+### 🎯 Objective
 
+To build a scalable analytics framework that:
 
-
-
-**Includes**
-1. Customer behavior
-2. Product demand
-3. Inventory utilization
-4. Store-level revenue performance
-
-The goal is to demonstrate how SQL can be used to generate **business insights** that **support inventory planning**, **demand analysis** and **revenue monitoring**.**
-
+- Tracks Rental Health (Total Revenue, AOV, and Active Base).
+- Identifies High-Value Tiers (Elite VIP vs. Occasional).
+- Optimizes Store Inventory (balancing supply vs. demand).
+- Detects Late Return Patterns to improve stock availability.
 
 
+---
 
-### problem 
+### 📊 Primary KPI Framework ⭐
 
-3. The Live Parallel: "The Netflix DVD Challenge"
-In the early 2000s, Netflix’s biggest problem wasn't streaming; it was Logistics.
+| Category         | KPIs                                   | Insight                                 |
+|----------------|----------------------------------------|------------------------------------------|
+| Business Health | Total Revenue, Total Rentals, AOV      | Overall financial scale.                 |
+| Customer Active | Customers, CLV, Loyalty Tiers          | User retention and value.                |
+| Product         | Revenue by Genre, Inventory Velocity   | Content demand vs. supply.               |
+| Operations      | Avg Rental Duration, Late Return Count | Asset turnover and efficiency.           |
 
-Demand: They had to predict which new releases to stock in high volume.
 
-Inventory: They had to ensure DVDs were returned quickly to satisfy the next person in the "queue."
+---
 
-Customer: They had to keep users on a subscription by ensuring they always had a movie at home.
-### 🧩 Business Problem
 
-A multi store rental business **needs visibility into operational performance**
-
-1. Which movie genres generate the most revenue
-2. Which customers drive the most rentals
-3. How often customers rent movies
-4. Whether rental durations impact inventory availability
-5. How revenue is distributed across stores
-
-Without structured analysis, these **Operational insights remain hidden** within multiple relational tables.
-
-### 🎯 Project Objective
-
-**Utilizing SQL** to analyze rental transactions and **uncover insights**
-
-1. Revenue contribution by movie genre
-2. Customer lifetime value
-3. Rental frequency and customer engagement
-4. Late return patterns affecting inventory availability
-5. Inventory utilization across films
-6. Store-level revenue performance
-
-## 📊 Dataset
+### 📊 Dataset
 
 Dataset Source: [MySQL Sakila Sample Database](https://github.com/jOOQ/sakila) 
 
@@ -72,270 +63,146 @@ Dataset **Size**:
 - **50,000+** rental and payment records
 - Handling **16+ relational tables** representing customers, inventory, films, and stores
 
+
+---
+
+
+### 🗄️ SQL Deep-Dive Analysis
+
+
+``` sql
+
+-- 1. Revenue & Business Health
+
+-- Total Revenue & Average order value
+SELECT 
+    SUM(amount) AS total_revenue,
+    AVG(amount) AS avg_order_value 
+FROM payment;
+
+```
+
+
+``` sql
+-- Monthly Revenue Trend
+SELECT 
+    DATE_TRUNC('month', payment_date) AS month,
+    SUM(amount) AS monthly_revenue
+FROM payment
+GROUP BY 1 ORDER BY 1;
+
+
+```
+
+
+``` sql
+
+
+-- 2. Customer Segmentation (CLV)
+
+-- Identifying the "Whales" (Top 10 Customers)
+SELECT 
+    customer_id, 
+    SUM(amount) AS lifetime_value
+FROM payment
+GROUP BY 1
+ORDER BY lifetime_value DESC
+LIMIT 10;
+
+```
+
+``` sql
+-- 3. Operational Leakage (Late Returns)
+
+-- Late return = return_date > rental_date + rental_duration
+SELECT 
+    f.title, 
+    COUNT(*) AS late_return_count
+FROM rental r
+JOIN inventory i ON r.inventory_id = i.inventory_id
+JOIN film f ON i.film_id = f.film_id
+WHERE r.return_date > r.rental_date + INTERVAL f.rental_duration DAY
+GROUP BY 1 ORDER BY 2 DESC;
+
+```
+
+---
+
+
+### ER Diagram
+
 <img width="799" height="521" alt="Sakila - ERD" src="https://github.com/user-attachments/assets/4ffc3c2f-1090-4a1a-88f1-1b94ca97054d" />
 
-# 🗂️ Data Model
-
-### Key Tables Used
-
-| Table | Business Meaning |
-|------|------------------|
-| Films | Product catalog |
-| Inventory | Stock |
-| Store | Distribution |
-| Category | Movie genres |
-| Rental | Customer transactions |
-| Payment | Revenue transactions |
-| Customer | Customer profiles |
-
----
-
-# 📈 SQL Business Analysis
-
-## 1️⃣ Revenue by Genre
-
-### Business Question
-Which movie genres generate the highest revenue?
-
-### Metric Utilized
-`SUM(payment.amount) AS total_revenue`
-
-### SQL Query
-
-```sql
-SELECT 
-    c.name AS genre,
-    SUM(p.amount) AS total_revenue
-FROM payment p
-JOIN rental r 
-    ON p.rental_id = r.rental_id
-JOIN inventory i 
-    ON r.inventory_id = i.inventory_id
-JOIN film f 
-    ON i.film_id = f.film_id
-JOIN film_category fc 
-    ON f.film_id = fc.film_id
-JOIN category c 
-    ON fc.category_id = c.category_id
-GROUP BY c.name
-ORDER BY total_revenue DESC;
-```
-**Sample Output** 
-
-| Genre     | Total Revenue ($) |
-|-----------|-------------------|
-| Sports    | 5,314             |
-| Sci-Fi    | 4,756             |
-| Animation | 4,656             |
-
-**Insight**
-
-The **Sports genre** generated the highest revenue **($5.3K)** followed by **Sci-Fi ($4.7K)** indicating stronger demand for these categories and suggesting higher inventory allocation for these genres.
-
----
-
-## 2️⃣ Customer Lifetime Value (CLV)
-
-### Business Question
-Which customers generate the highest lifetime revenue?
-
-### Metric Used
-`SUM(payment.amount) AS customer_lifetime_value`
-
-### SQL Query
-
-```sql
-SELECT 
-    c.customer_id,
-    c.first_name,
-    c.last_name,
-    SUM(p.amount) AS customer_lifetime_value
-FROM customer c
-JOIN payment p
-    ON c.customer_id = p.customer_id
-GROUP BY c.customer_id, c.first_name, c.last_name
-ORDER BY customer_lifetime_value DESC;
-```
-**Sample Output**
-
-| **Customer**      | **CLV ($)** |
-|-------------------|-------------|
-| Eleanor Hunt      | 211         |
-| Karl Seal         | 208         |
-| Clara Shaw        | 205         |
-
-**Insight**
-- The **top 3** customers generated over **$200 in lifetime revenue**, highlighting a small group of high-value customers driving significant recurring revenue.
----
-
-## 3️⃣ Rental Frequency Analysis
-
-### Business Question
-How frequently do customers rent movies?
-
-### Metric Used
-`COUNT(rental_id) AS total_rentals`
-
-### SQL Query
-
-```sql
-SELECT 
-    customer_id,
-    COUNT(rental_id) AS total_rentals
-FROM rental
-GROUP BY customer_id
-ORDER BY total_rentals DESC;
-```
-
-**Sample Output**
-
-| Customer ID | Total Rentals |
-|-------------|---------------|
-| 148         | 46            |
-| 526         | 45            |
-| 236         | 42            |
-
-**Insight**
-
-- The **3 most active customers** rented **40+ movies**, showing that a small segment of users contributes disproportionately to rental activity.
----
-
-## 4️⃣ Late Return Analysis
-
-### Business Question
-How long do customers keep rented movies before returning them?
-
-### Metric Used
-`DATEDIFF(return_date, rental_date) AS rental_duration`
-
-### SQL Query
-
-```sql
-SELECT 
-    rental_id,
-    customer_id,
-    DATEDIFF(return_date, rental_date) AS rental_duration
-FROM rental;
-```
-**Sample Output**
-
-| Rental ID | Customer | Rental Duration |
-|-----------|----------|-----------------|
-| 1023      | 45       | 5 days          |
-| 2045      | 122      | 6 days          |
-| 3156      | 98       | 4 days          |
-
-**Insight**
-
-Most **rentals last 4-6 days**, meaning inventory remains **unavailable during this period**, impacting product circulation.
-
----
-
-## 5️⃣ Revenue by Store
-
-### Business Question
-How does revenue differ between store locations?
-
-### Metric Used
-`SUM(payment.amount) AS total_revenue`
-
-### SQL Query
-
-```sql
-SELECT 
-    s.store_id,
-    SUM(p.amount) AS total_revenue
-FROM payment p
-JOIN staff st
-    ON p.staff_id = st.staff_id
-JOIN store s
-    ON st.store_id = s.store_id
-GROUP BY s.store_id
-ORDER BY total_revenue DESC;
-```
-**Sample Output**
-
-| Store   | Revenue ($) |
-|---------|-------------|
-| Store 1 | 33,902      |
-| Store 2 | 33,079      |
-
-**Insight**
-
-- **2 stores generated** similar **revenue (~$33K)**, indicating balanced demand and comparable store performance.
----
-
-# 📊 Dashboard Visualization
-
-A **Power BI dashboard** was built to visualize **key operational metrics**
-
-1. 50,000+ rental and payment records analyzed
-2. 599 customers evaluated
-3. $67K total revenue analyzed
-4. 16 movie categories analyzed
-5. 2 store locations compared
-
-<img width="1137" height="613" alt="Inventory Project 2 S S" src="https://github.com/user-attachments/assets/855d8685-385d-4731-b55c-00e993409615" />
 
 
 ---
 
-### Advanced_SQL_Analysis
 
-#### 1️⃣ CTE Analysis - Top Performing Genres by Store
+### ✨ Power BI Implementation
+DAX Measures Utilized:
 
-**Why this:**  
-Instead of one massive, messy join, a **CTE breaks the logic** into structured building blocks.  
-It demonstrates the ability to **organize complex data** transformations in a **scalable way**.
+Average Rental Duration: AVG_Duration = AVERAGE(Rental[Duration])
 
-```sql
-WITH GenreRevenue AS (
-    SELECT 
-        s.store_id,
-        c.name AS genre,
-        SUM(p.amount) AS total_revenue
-    FROM payment p
-    JOIN rental r ON p.rental_id = r.rental_id
-    JOIN inventory i ON r.inventory_id = i.inventory_id
-    JOIN store s ON i.store_id = s.store_id
-    JOIN film_category fc ON i.film_id = fc.film_id
-    JOIN category c ON fc.category_id = c.category_id
-    GROUP BY s.store_id, c.name
-)
+Customer Tiering: 
+```dax
+Loyalty_Tier = SWITCH(TRUE(),
+[Rental_Count] >= 40, "Elite VIP",
+[Rental_Count] >= 20, "Preferred",
+"Occasional")
 
-SELECT *
-FROM GenreRevenue
-WHERE total_revenue > 2500
-ORDER BY total_revenue DESC;
+Store Revenue Gap: Revenue_Gap = [Store 2 Revenue] - [Store 1 Revenue]
+
+
+
 
 ```
-**What I Discovered:**
-1. This allows a manager to identify Power Performing Genres generating more than $2,500 revenue across store locations.
 
-### 2️⃣ Window Function - Analysis Customer Ranking by Spend
+---
 
-**Why this:**
-A standard ORDER BY only sorts the results.
-**Window functions** like **RANK()** and **NTILE()** enable customer segmentation **without collapsing rows**, which is extremely **useful for marketing and loyalty programs**.
 
-```sql
-SELECT 
-    customer_id,
-    SUM(amount) AS total_spent,
-    RANK() OVER (ORDER BY SUM(amount) DESC) AS spend_rank,
-    NTILE(10) OVER (ORDER BY SUM(amount) DESC) AS customer_tier
-FROM payment
-GROUP BY customer_id
-ORDER BY spend_rank
-LIMIT 10;
-```
 
-**What I Discovered**
-1. spend_rank: Shows the exact **ranking** of **customers** by **total spending**.
-2. customer_tier: Segments customers into **10** deciles.
 
-### 💡 Business Use Case:
-The company can target **top 10% customers** with **VIP offers** or **loyalty programs** to increase retention and revenue.
+
+### 📈 Business Performance Snapshot
+Total Revenue: $67,416.51
+
+Active Customers: 599
+
+Avg Rental Duration: 4.99 Days
+
+Inventory Capacity: 4,581 Units across 1,000 Films
+
+---
+
+
+### 📊 Key Insights
+
+### 👥 Customer Intelligence
+1. High Stability: The top 10 customers have a narrow spend range ($193–$211), indicating a very stable power-user base.
+
+2. Retention Success: The bulk of users are "Regulars" (11–19 rentals), showing high stickiness.
+
+### 🛍️ Product & Genre Performance
+
+1. Niche Dominance: Sports (21%) and Sci-Fi (19%) drive nearly half of all revenue.
+2. Underperformers: Travel and Music genres show significantly lower engagement, suggesting inventory should be shifted.
+
+### ⚙️ Operational Inefficiency
+
+1. The Store Paradox: Store 2 has more inventory but fewer customers than Store 1.
+2. Late Returns: High late return counts in specific genres (Sports) are likely causing "out-of-stock" issues during peak windows.
+
+### 💡 Business Recommendations
+- Inventory Rebalancing: Relocate underperforming inventory from Store 2 to Store 1 to meet higher customer foot traffic.
+- Late Return Mitigation: Introduce a "Loyalty Bonus" for early returns to increase Inventory Velocity and film availability.
+- Targeted Niche Expansion: Since Sports and Sci-Fi are the "hooks," bundle these with lower-performing genres to increase AOV.
+- Top-of-Funnel Focus: Launch a "First 3 Rentals Free" campaign to convert the "Casual" segment into the "Regular" tier.
+
+
+
+
+--- 
+
 
 ```
 📁 Repository Structure
@@ -368,32 +235,26 @@ Movie-Rental-Inventory-Analytics-SQL
 ```
 ---
 
-# 🛠️ Tools & Technologies
+### ⚙️ Tech Stack
 
-1. **SQL (MySQL)**
-2. **Power BI**
-3. Relational Data Modeling
-4. Data Analysis
-
----
-
-# 📚 Skills Demonstrated
-
-1. Advanced SQL **joins** across **multiple tables **
-2. **Business metric** calculations using aggregations
-3. Customer analytics and **segmentation**
-4. Revenue performance analysis
-5. Data **storytelling** using **analytical** insights  
+| Tool      | Purpose ⭐                                               |
+|-----------|----------------------------------------------------------|
+| Excel     | ETL, Power Query, Data Cleaning, Transformation          |
+| SQL       | Deep analysis, Aggregations, calculations & segmentation |
+| Power BI  | Data modeling, DAX measures, dashboards, charts & visualization |
 
 ---
 
-# 👤 About Me
+![movie1](https://github.com/user-attachments/assets/2fb575c5-2957-41b5-a2b9-337ee91fc36d)
+
+
+### 👤 About Me
 
 **A Sai Arvind**  
-Data Analyst | SQL | Power BI | Business Analytics  
 
 📧 Email: saiarvind5081@gmail.com  
 🔗 LinkedIn: https://www.linkedin.com/in/saiarvindofficial/  
 💻 GitHub: https://github.com/Sai-Arvind  
 
 ⭐ If you found this project useful, consider giving it a star.
+
