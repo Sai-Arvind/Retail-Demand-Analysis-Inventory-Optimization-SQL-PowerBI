@@ -1,6 +1,4 @@
-
-
-# Movies Dvd Store Business
+# Retail Store Movie Business
 - **Industry:** Rental & Subscription Retail
 - **Product Demand** and **Inventory Optimization** using Customer & Store Insights, "Which of the Top 3 categories Driving 57% of Revenue".
 
