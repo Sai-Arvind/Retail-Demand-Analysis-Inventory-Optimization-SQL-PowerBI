@@ -1,6 +1,6 @@
 # Retail Store Movie Business Analysis
 
-- **Industry:** Rental & Subscription, This project simulates a **Netflix 2005-era DVD** rental business
+- **Industry:** Rental & Subscription, This project simulates a **Netflix 2005 DVD-era** rental business
 
 <img width="1280" height="720" alt="image" src="https://github.com/user-attachments/assets/c8759eac-a1d2-4239-afee-1dc7f47237b2" />
 
