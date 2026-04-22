@@ -168,7 +168,7 @@ ORDER BY demand DESC;
 
 ### Inventory Efficiency Layer
 
-> Demand per Inventory KPI
+> Demand per Inventory KPI (Demand per Copy = Total Rentals ÷ Number of Copies)
 
 ``` sql
 
