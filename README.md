@@ -70,12 +70,12 @@ Build a scalable analytics framework to:
 
 | Category         | KPIs                                   | Insight                                |
 |------------------|-----------------------------|---------------------------------------------------|
-| Business Health   |   Total Revenue, Total Rentals, AOV, Active customers  |  Overall financial scale.        |
+| Business Health   |   Total Revenue, Total Rentals, AOV, Active customers  |  Overall financial scale         |
 | Demand            |   Rentals by Category, Top Rating                      |  What do customers want          |
-| Inventory	        |   Inventory Velocity, Revenue per Inventory	         |  Are we stocking efficiently?    |
-| Customer	        |   CLV, Segmentation, Spending	                         |  Who drives revenue?             |
-| Store	            |   Revenue % , Rentals %, Efficiency                    |  Where is execution failing?     |
-| Operations	    |   Rental Duration, Late Returns	                     |  Where do we lose efficiency?    |
+| Inventory	        |   Velocity, Revenue                                    |  Are we stocking efficiently?    |
+| Customer	        |   CLV, Segmentation                                    |  Who drives revenue?             |
+| Store	            |   Revenue, Rentals, Efficiency %                       |  Where is execution failing?     |
+| Operations	    |   Rental Duration                                      |  Where do we lose efficiency?    |
 
 
 ---
@@ -87,8 +87,8 @@ Source: [MySQL Sakila Sample Database](https://github.com/jOOQ/sakila)
 
 Scale:
 - **32,000+** rental & payment records
-- Across 16+ relational tables
-- Entities: Customers, Films, Inventory, Stores, Rentals, payments
+- Across **16+ relational tables**
+- Entities: Customers, Films, Inventory, Stores, payments, Rentals
 
 
 ---
