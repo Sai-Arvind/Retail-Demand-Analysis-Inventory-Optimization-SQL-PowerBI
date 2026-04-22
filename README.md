@@ -1,39 +1,55 @@
 # Retail Store Movie Business Analysis
 
-- **Industry:** Rental & Subscription Retail, This project simulates a **2005-era DVD Netflix** rental business
-
-- Demand, Inventory & Customer Intelligence via Product & Store insights
-
+- **Industry:** Rental & Subscription, This project simulates a **Netflix 2005-era DVD** rental business
 
 <img width="1280" height="720" alt="image" src="https://github.com/user-attachments/assets/c8759eac-a1d2-4239-afee-1dc7f47237b2" />
 
 ---
 
+### 📌 Project Overview
+
+- The analysis focuses on optimizing **Demand, Inventory, and Customer Intelligence** via **Product and Store-level insights**, directly influence **revenue, utilization, and operational efficiency**.
+
 ### ⚡ Executive Summary
-
-Demand is widely distributed across categories, with the top category contributing only ~7% and even the top 5 categories accounting for just ~35% of total demand, indicating no strong category dominance.
-
-- 📦 Inventory availability
-- 👥 Customer behavior
-- ⏳ Return patterns
-
-directly influence **revenue, utilization, and operational efficiency**.
-
+- Demand is widely distributed across categories, indicating no strong category dominance, with the top category contributing ~7% and even the top 5 categories accounting for just ~35% of total demand.
 
 ---
 
 ### 🚩 Business Problem
 
-The business faces key operational challenges:
+### Business Performance
 
-- **Inventory Mismatch**
-Why do stores with higher inventory generate lower revenue?
-- **Revenue Leakage**
-How much demand is lost due to late returns and stock unavailability?
-- **Customer Concentration**
-Who are the high-value users driving consistent revenue?
-- **Content Strategy**
-Is revenue dependent on specific genres?
+- Are we growing or declining?
+- Are customers increasing?
+- Is revenue efficient per transaction?
+
+### What Customers Actually Want (Demand)
+
+- No clarity on which genres/content drive demand
+- Risk of investing in the wrong content
+
+### 📦 Inventory Misallocation (Overstock vs Understock)
+
+- Some movies sit idle
+- Some are always unavailable
+- Capital is wasted in inventory
+
+### 👥 Who Actually Drives Revenue?
+
+- All customers treated equally
+- No targeting or retention strategy
+
+### 🏬 Store-Level Inefficiency (Execution Gap)
+
+- Some stores underperform
+- Inventory not aligned with local demand
+
+
+### 📈 No Time-Based Strategy
+
+- Business doesn’t understand seasonality or trends
+
+
 
 ---
 
@@ -42,24 +58,24 @@ Is revenue dependent on specific genres?
 Build a scalable analytics framework to:
 
 - Track Business Health KPIs
-- Identify High-Value Customers
+- Identify High-Value Categories 
 - Optimize Inventory Allocation
-- Improve Operational Efficiency
-- Detect Revenue Leakage Drivers
+- Understand Customer Targeting
+- Provide Store wise seasonality
 
 
 ---
 
 ### 📊 Primary KPI Framework ⭐
 
-| Category         | KPIs                                   | Insight                                 |
-|----------------|----------------------------------------|------------------------------------------|
-| Business Health | Total Revenue, Total Rentals, AOV, Active customers  | Overall financial scale.   |
-| Demand           | Rentals by Category, Rating           |    What do customers want?               |
-|Inventory	        |   Demand per Inventory, Revenue per Inventory	  |  Are we stocking efficiently?  |
-|Customer	         |   CLV, Segments, Spend	                         | Who drives revenue?            |
-|Store	            |   Revenue, Rentals, Efficiency                 | 	Where is execution failing?    |
-|Operations	       |    Rental Duration, Late Returns	             |  Where do we lose efficiency?    |
+| Category         | KPIs                                   | Insight                                |
+|------------------|-----------------------------|---------------------------------------------------|
+| Business Health   |   Total Revenue, Total Rentals, AOV, Active customers  |  Overall financial scale.        |
+| Demand            |   Rentals by Category, Top Rating                      |  What do customers want          |
+| Inventory	        |   Inventory Velocity, Revenue per Inventory	         |  Are we stocking efficiently?    |
+| Customer	        |   CLV, Segmentation, Spending	                         |  Who drives revenue?             |
+| Store	            |   Revenue % , Rentals %, Efficiency                    |  Where is execution failing?     |
+| Operations	    |   Rental Duration, Late Returns	                     |  Where do we lose efficiency?    |
 
 
 ---
@@ -72,7 +88,7 @@ Source: [MySQL Sakila Sample Database](https://github.com/jOOQ/sakila)
 Scale:
 - **32,000+** rental & payment records
 - Across 16+ relational tables
-- Entities: Customers, Films, Inventory, Stores, Rentals
+- Entities: Customers, Films, Inventory, Stores, Rentals, payments
 
 
 ---
@@ -80,7 +96,9 @@ Scale:
 
 ### ⚙️ SQL Deep-Dive Analysis
 
-### Current Business Health
+### Current Business Health 
+
+> Revenue, Rentals, AOV, Active Customers
 
 ``` sql
 
@@ -96,8 +114,15 @@ select count(distinct customer_id) as active_customers from rental;
 -- AOV
 select avg(amount) as avg_order_value from payment;
 
+✅ Insight
+> Establishes a single source of truth
+> Enables executive decision-making
+> Detects growth vs stagnation early
+
 ```
-### Demand Analysis Layer
+### Demand Layer
+
+> Demand Analysis (Category + Rating)
 
 ``` sql
 
@@ -133,15 +158,17 @@ JOIN film f ON i.film_id = f.film_id
 GROUP BY f.rating
 ORDER BY demand DESC;
 
-> ✅ Insight
-Demand is widely distributed across categories
-However, revenue is concentrated, with top genres driving disproportionate value
+✅ Insight
+> Demand is spread out (no dominance)
+> Revenue is concentrated (few genres drive money)
 
 
 ```
 
 
 ### Inventory Efficiency Layer
+
+> Demand per Inventory KPI
 
 ``` sql
 
@@ -164,10 +191,10 @@ ORDER BY demand_per_inventory ASC
 LIMIT 10;
 
 
-> ✅ Insight
-Top films → ~5 rentals per copy
-Bottom films → ~2 rentals per copy
-Indicates understocking of high-demand content and overstocking of low-demand content
+✅ Insight
+> Top films → ~5 rentals per copy
+> Bottom films → ~2 rentals per copy
+> Indicates understocking of high-demand content and overstocking of low-demand content
 
 ```
 
@@ -175,8 +202,9 @@ Indicates understocking of high-demand content and overstocking of low-demand co
 
 ### Customer Intelligence Layer 
 
-``` SQL
+> Customer Segmentation + CLV Analysis + % 
 
+``` SQL
 
 -- 1. Customer Activity
 
@@ -221,10 +249,10 @@ GROUP BY c.customer_id
 ORDER BY total_spent DESC;
 
 
-> ✅ Insight
-- Strong power-user base
-- High retention in mid-tier customers
-- Stable top spenders → predictable revenue
+✅ Insight
+> Strong power-user base
+> High retention in mid-tier customers
+> Stable top spenders → predictable revenue
 
 
 
@@ -233,10 +261,11 @@ ORDER BY total_spent DESC;
 
 ### STORE LAYER
 
+> Store Revenue + Efficiency Metrics
 
 ``` sql
 
--- 1. Store Revenue
+-- 1. Store wise revenue and rentals
 
 SELECT 
     s.store_id,
@@ -247,10 +276,6 @@ JOIN staff st ON s.store_id = st.store_id
 JOIN rental r ON st.staff_id = r.staff_id
 JOIN payment p ON r.rental_id = p.rental_id
 GROUP BY s.store_id;
-
--- Which store drives more rentals & revenue
-
-
 
 
 -- 2. Store Efficiency (Inventory vs Demand)
@@ -268,9 +293,9 @@ JOIN inventory i ON s.store_id = i.store_id
 LEFT JOIN rental r ON i.inventory_id = r.inventory_id
 GROUP BY s.store_id;
 
-> ✅ Insight
-- Store with more inventory ≠ higher revenue
-- Clear inventory allocation inefficiency
+✅ Insight
+> Store with more inventory ≠ higher revenue
+> Demand allocation is inefficient
 
 
 
@@ -280,6 +305,7 @@ GROUP BY s.store_id;
 
 ### Time & Operations
 
+> Monthly Demand & Revenue Trends
 
 ``` sql 
 
@@ -322,8 +348,9 @@ ORDER BY month;
 
 ### ✨ Power BI Implementation
 
+> DAX Measures
+
 ``` Powerbi
--- DAX Measures
 
 1. Average Rental Duration: AVG_Duration = AVERAGE(Rental[Duration])
 
@@ -334,7 +361,7 @@ Loyalty_Tier = SWITCH(TRUE(),
 [Rental_Count] >= 20, "Preferred",
 "Occasional")
 
-Store Revenue Gap: Revenue_Gap = [Store 2 Revenue] - [Store 1 Revenue]
+3. Store Revenue Gap: Revenue_Gap = [Store 2 Revenue] - [Store 1 Revenue]
 
 
 ```
@@ -343,7 +370,7 @@ Store Revenue Gap: Revenue_Gap = [Store 2 Revenue] - [Store 1 Revenue]
 
 
 
-### 📈 Business Performance Snapshot
+### 📊 Key Insights
 - 💰 Revenue: **$67,416**
 - 👥 Customers: **599**
 - 📦 Inventory: **4,581 units**
@@ -353,61 +380,38 @@ Store Revenue Gap: Revenue_Gap = [Store 2 Revenue] - [Store 1 Revenue]
 ---
 
 
-### 📊 Key Insights
-
-## 👥 Customer
-- Stable high-value users
-- Strong mid-tier retention
-## 🎬 Product
-- Demand distributed
-- Revenue concentrated in top genres
-## ⚙️ Inventory
-- High variance in utilization (2x–5x)
-- Overstock + understock coexist
-## 🏬 Store
-- Inventory ≠ performance
-- Poor allocation strategy
-## ⏳ Operations
-- Late returns reduce availability
-- Impacts peak demand fulfillment
-
---- 
-
 ### 💡 Business Recommendations
 
-**1. Inventory Rebalancing**
 
-Shift stock from low-performing (~2 rentals/copy)
-to high-performing (~5 rentals/copy) titles
-
-→ Potential **2–2.5x utilization improvement**
-
-**2. Late Return Reduction**
-
-Introduce:
-
-- Early return incentives
-- Loyalty rewards
-
-→ Improves inventory availability
-
-**3. Genre Strategy**
-
-- Expand high-revenue genres (Sports, Sci-Fi)
-- Bundle with low-performing categories
-
-→ Increase AOV
+### 🎬 Product 
+- Avoids misleading demand signals
+- Helps prioritize: High-revenue genres over just high-demand ones
 
 
-**4. Store Optimization**
-
-Reallocate inventory toward:
-
-- High-demand stores
-- High-footfall regions
+### ⚙️ Inventory
+Rebalance inventory:
+- Increase copies of high-performing films
+- Reduce slow-moving stock
 
 
+### 👥 Customer
+- 🎯 Targeted marketing
+- 💰 Loyalty programs
+- 📈 Revenue predictability
 
+### 🏬 Store
+- Inventory ≠ performance
+- Poor allocation strategy
+
+### Time Based 
+- Seasonal stocking strategy
+- Marketing campaign timing
+- Demand forecasting
+
+### ⏳ Operations
+- Late returns reduce availability
+- Impacts peak demand fulfillment
+  
 
 --- 
 
@@ -450,13 +454,10 @@ Movie-Rental-Inventory-Analytics-SQL
 | Tools      | Techniques ⭐                                               |
 |-----------|----------------------------------------------------------|
 | Advance Excel  | Pivot Tables, Formulas, Power Query, Cleaning, ETL         |
-| MySQL       | Joins, Aggregations, Window Function, Ctes |
+| MySQL       | Joins, Aggregations, Window Function, Ctes                    |
 | Power BI  | Data modeling, Star Schema, DAX measures, dashboards, charts & visualization |
 
 ---
-
-![movie1](https://github.com/user-attachments/assets/2fb575c5-2957-41b5-a2b9-337ee91fc36d)
-
 
 ### 👤 About Me
 
@@ -467,4 +468,11 @@ Movie-Rental-Inventory-Analytics-SQL
 💻 GitHub: https://github.com/Sai-Arvind  
 
 ⭐ If you found this project useful, consider giving it a star.
+
+--- 
+
+
+![movie1](https://github.com/user-attachments/assets/2fb575c5-2957-41b5-a2b9-337ee91fc36d)
+
+
 
