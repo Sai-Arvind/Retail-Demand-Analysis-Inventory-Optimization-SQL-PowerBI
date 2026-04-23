@@ -1,7 +1,7 @@
 # DvD Rental Store: 360° Root Cause of Customer Churn Analysis
 
+<img width="1024" height="576" alt="image" src="https://github.com/user-attachments/assets/1a5b1185-363f-4dd4-9fea-96e7c9fd5b5d" />
 
-<img width="1280" height="720" alt="image" src="https://github.com/user-attachments/assets/c8759eac-a1d2-4239-afee-1dc7f47237b2" />
 
 ---
 
@@ -17,7 +17,7 @@
 
 ## 📌 Project Overview
 
-This project is simulation of DVD rental business **(Netflix 2006-era & Walmart retail)**.
+This **project is simulation of** DVD rental business **(Netflix 2006-era & Walmart retail)**.
 
 Analytics lifecycle:
 **Descriptive, Diagnostic** and Early stage of **Predictive** Indicators are covered.
@@ -369,10 +369,7 @@ dvd-rental-churn-analysis/
 
 ⭐ If you found this project useful, consider giving it a star.
 
---- 
-
-
-![movie1](https://github.com/user-attachments/assets/2fb575c5-2957-41b5-a2b9-337ee91fc36d)
+---
 
 
 
