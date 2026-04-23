@@ -62,18 +62,18 @@ Build a scalable analytics framework to:
 
 To evaluate the health of the DVD rental business, the following Key Performance Indicators (KPIs) were defined across Inventory, Operations, and Customer behavior.
 
-| Category   | KPI                     | Definition                                      | Business Purpose                                  | Problem Signal                          |
-|------------|--------------------------|--------------------------------------------------|--------------------------------------------------|------------------------------------------|
-| Inventory  | Inventory Turnover       | Total Rentals per Film / Total Copies           | Measures how efficiently inventory is utilized    | Low turnover → Dead stock                |
-| Inventory  | Asset ROI                | Total Revenue per Film / Replacement Cost       | Evaluates profitability of each title             | ROI < 1 → Loss-making inventory          |
-| Inventory  | Revenue per Title        | Total revenue generated per film                | Identifies high vs low performers                 | Low revenue → Poor demand                |
-| Operations | Late Return Rate (LRR)   | Late Returns / Total Rentals                    | Measures customer friction due to policies        | High (>40%) → Policy failure             |
-| Operations | Avg Rental Delay         | Avg(Return Date - Allowed Date)                 | Measures severity of delays                       | High delay → Unrealistic duration        |
-| Operations | Revenue per Rental       | Avg payment per rental                          | Tracks pricing effectiveness                      | Low → Pricing inefficiency               |
-| Customer   | Recency                  | Days since last rental                          | Measures customer activity                        | High → Churn risk                        |
-| Customer   | Frequency                | Total rentals per customer                      | Measures engagement level                         | Low → Weak retention                     |
-| Customer   | Monetary (CLV Proxy)     | Total spend per customer                        | Identifies high-value customers                   | High value + inactive → Revenue risk     |
-| Customer   | Churn Rate               | % of inactive customers (>30 days)              | Tracks customer loss                              | High churn → Growth problem              |
+| Category   | KPI                     | Measure                                          |           Purpose                                  | 
+|------------|--------------------------|-------------------------------------------------|--------------------------------------------------|
+| Inventory  | Inventory Turnover       | Total Rentals per Film / Total Copies           | Efficiently inventory is utilized                 | 
+| Inventory  | Asset ROI                | Total Revenue per Film / Replacement Cost       | understand profitability of each title             | 
+| Inventory  | Revenue per Title        | Total revenue generated per film                | Identifies high vs low performers                 | 
+| Operations | Late Return Rate (LRR)   | Late Returns / Total Rentals                    |  customer friction due to policies        | 
+| Operations | Avg Rental Delay         | Avg(Return Date - Allowed Date)                 | severity of delays                       | 
+| Operations | Revenue per Rental       | Avg payment per rental                          | Tracks pricing effectiveness                      |
+| Customer   | Recency                  | Days since last rental                          | customer activity                        | 
+| Customer   | Frequency                | Total rentals per customer                      |  engagement level                         | 
+| Customer   | Monetary (CLV Proxy)     | Total spend per customer                        | Identifies high-value customers                   | 
+| Customer   | Churn Rate               | % of inactive customers (>30 days)              | Tracks customer loss                              | 
 
 
 
