@@ -1,4 +1,4 @@
-# Retail Store Movie Business Analysis
+# DvD Rental Store: Root Cause of Customer Churn & Operational Inefficiency Analytics
 
 - **Industry:** Rental & Subscription
 - **Simulation:** **Netflix** (2006 DVD Era) + **Walmart** DVD Rental Model rental business 
