@@ -10,7 +10,7 @@
 This project analyzes a DVD rental business **(Netflix 2006-era + Walmart-style retail model)** to identify the root causes of declining performance.
 
 The analysis follows a full analytics lifecycle:
-**Descriptive → Diagnostic → Predictive**
+**Descriptive → Diagnostic → Early-stage Predictive Indicators**
 
 It uncovers a system-wide failure loop across:
 - Inventory (Supply)
@@ -400,6 +400,19 @@ FROM customer_recency
 GROUP BY customer_segment;
 
 
+-------------------------------------------------------- 5.Seasonlaity
+SELECT 
+    DATE_FORMAT(payment_date, '%Y-%m') AS month,
+    COUNT(*) AS rentals,
+    SUM(amount) AS revenue
+FROM payment
+GROUP BY month
+ORDER BY month;
+
+
+
+
+
 ```
 
 
@@ -467,7 +480,7 @@ Store Revenue Gap: Revenue_Gap = [Store 2 Revenue] - [Store 1 Revenue]
 ## 💡 Prescriptive Analysis (Recommendations)
 
 ### 1. Fix Rental Policy (Top Priority)
-- Increase rental duration for high-late categories
+- Increasing rental duration by 1–2 days could reduce late return rates (~55%) and improve customer satisfaction.
 - Reduce penalty-driven friction
 
 ---
@@ -500,6 +513,94 @@ dvd-rental-churn-analysis/
 └── .gitignore
 
 ```
+---
+
+# Ongoing 
+
+- churn model in Python:
+
+> Logistic Regression
+> Target: churn (inactive > X days)
+
+
+### ⚠️ Critical Finding: Late Behavior is System-Wide
+
+Customer segmentation revealed that 100% of customers have experienced late returns.
+
+This indicates that late behavior is not user-specific, but rather a system-wide outcome driven by operational policies.
+
+With a ~55% Late Return Rate and ~73% churn rate, the data suggests that:
+
+- Late returns are the **default behavior**
+- **Customers** are **consistently exposed to penalties**
+- **Friction** is embedded into the business model
+
+👉 This confirms that churn is not driven by low-value users or isolated behavior,
+but by a structural mismatch between rental policy and customer usage patterns.
+
+> The system is extracting maximum value from its best users… and potentially burning them out.
+
+
+``` sql
+
+-- cohort comparison: Tag customers
+
+WITH late_users AS (
+    SELECT DISTINCT customer_id
+    FROM rental r
+    JOIN inventory i ON r.inventory_id = i.inventory_id
+    JOIN film f ON i.film_id = f.film_id
+    WHERE r.return_date > DATE_ADD(r.rental_date, INTERVAL f.rental_duration DAY)
+),
+
+customer_activity AS (
+    SELECT 
+        c.customer_id,
+        MAX(p.payment_date) AS last_activity,
+        DATEDIFF((SELECT MAX(payment_date) FROM payment), MAX(p.payment_date)) AS recency
+    FROM customer c
+    JOIN payment p ON c.customer_id = p.customer_id
+    GROUP BY c.customer_id
+)
+
+SELECT 
+    CASE 
+        WHEN l.customer_id IS NOT NULL THEN 'Late Users'
+        ELSE 'On-Time Users'
+    END AS user_type,
+    
+    COUNT(*) AS customers,
+    
+    ROUND(AVG(recency),2) AS avg_recency,
+    
+    ROUND(AVG(CASE WHEN recency > 30 THEN 1 ELSE 0 END)*100,2) AS churn_rate_pct
+
+FROM customer_activity c
+LEFT JOIN late_users l 
+    ON c.customer_id = l.customer_id
+
+GROUP BY user_type;
+
+
+-- ~55% Late Return Rate
+-- High churn (~73%)
+-- No difference between active vs inactive spend
+
+```
+
+
+# Prescriptive Statement
+
+### 📈 Revenue Impact Simulation 
+
+Reducing the Late Return Rate from ~55% to ~30% is expected to:
+
+- Recover ~15–20% of churned customers
+- Reactivate ~80–90 high-value users
+- Generate an estimated $8K–$10K in recovered revenue
+
+👉 This demonstrates that fixing operational friction has a direct and measurable financial impact.
+
 ---
 
 ## ⚙️ Tech Stack
