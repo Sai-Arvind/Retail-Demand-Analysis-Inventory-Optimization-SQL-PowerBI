@@ -277,7 +277,7 @@ Store Revenue Gap: Revenue_Gap = [Store 2 Revenue] - [Store 1 Revenue]
 *👉 The system is designed such that the average customer fails.*
 
 ## 🔄 Root Cause Loop
-Inventory → Experience → Late Returns → Penalties → Churn
+Short rental duration → Late returns → Penalties → Poor experience → Churn
 
 
 ## 💡 Business Recommendations
