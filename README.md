@@ -6,21 +6,22 @@
 ---
 
 
-## ⚡ Executive Summary
-- 55% rentals returned late
-- 73% customer churn across all segments
-- **Root cause:** rental policy mismatch
-- Fixing friction can recover ~$8K–$10K revenue
-
----
-
-
 ## 📌 Project Overview
 
 This **project is simulation of** DVD rental business **(Netflix 2006-era & Walmart retail)**.
 
 Analytics lifecycle:
 **Descriptive, Diagnostic** and Early stage of **Predictive** Indicators are covered.
+
+
+---
+
+
+## ⚡ Executive Summary
+- 55% rentals returned late
+- 73% customer churn across all segments
+- **Root cause:** rental policy mismatch
+- Fixing friction can recover ~$8K–$10K revenue
 
 ---
 
